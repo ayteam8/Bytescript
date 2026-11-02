@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <bs_api.h> // nueva cosa añadida en false_windows
 
 char base64_decode_table[256];
 const char base64_encode_table[] = {
@@ -11,8 +12,8 @@ const char base64_encode_table[] = {
     "0123456789+/"
 };
 
-__declspec(dllexport) char* bytescript_module_map = "Base64_map.bs";
-__declspec(dllexport) TValue bytescript_module_loader(TValue* argv, size_t argc) {
+BS_API char* bytescript_module_map = "Base64_map.bs";
+BS_API TValue bytescript_module_loader(TValue* argv, size_t argc) {
     TValue fields[] = {
         new_cfunc(encode_base64),
         new_cfunc(decode_base64),

@@ -1,12 +1,11 @@
 CC = gcc
-CFLAGS = -I./ -I../ -I../src -I../dist
+CFLAGS = -I./ -I../ -I../src -I../dist -I../false_windows -ldl -lm -D_GNU_SOURCE -fPIC -rdynamic
 
 SRC := $(wildcard */*.c)
 OBJS := $(SRC:.c=.o)
-DLL := $(SRC:%.c=../dist/stdlib/%.dll)
+DLL := $(SRC:%.c=../dist/stdlib/%.so)
 
 OBJ := $(MATH_OBJ:%.o=../build/%.o)
-C_API := ../dist/bytescript.lib
 TARGET := $(DLL)
 
 .PRECIOUS: $(OBJ)
@@ -37,8 +36,8 @@ debug : main
 release : CFLAGS += -O3
 release : main
 
-../dist/stdlib/%.dll: ../build/%.o ../dist/stdlib/%_map.bs | ../dist/stdlib
-	$(CC) $(CFLAGS) -shared ../build/$(notdir $<) $(C_API) -o ../dist/stdlib/$(notdir $@)
+../dist/stdlib/%.so: ../build/%.o ../dist/stdlib/%_map.bs | ../dist/stdlib
+	$(CC) $(CFLAGS) -shared ../build/$(notdir $<) -o ../dist/stdlib/$(notdir $@)
 
 ../dist/stdlib/%.bs: ../dist/stdlib
 	cp $*.bs ../dist/stdlib
@@ -51,3 +50,6 @@ release : main
 
 ../dist/stdlib:
 	mkdir -p ../dist/stdlib
+
+
+

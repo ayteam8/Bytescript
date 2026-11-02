@@ -37,6 +37,7 @@ TValue read_file(TValue* argv, size_t argc) {
     str->str[read] = '\0';
 
     fclose(file->handle);
+    file->handle = NULL;
     return STR_TO_TVALUE(str);
 }
 
@@ -63,6 +64,7 @@ TValue close_file(TValue* argv, size_t argc) {
     TValue tfile = obj->fields[0];
 
     FileData* file = as_filedata(tfile);
+    if (file->handle==NULL) return NIL;
     fclose(file->handle);
 
     return NIL;

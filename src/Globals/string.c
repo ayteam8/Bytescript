@@ -252,7 +252,7 @@ TValue format_s(FormatInfos infos, TValue value) {
     size_t precision = infos.precision + 1 ? CLAMP(infos.precision, 0, ptr->len) : ptr->len;
     size_t len = MAX(precision, infos.width);
 
-    TStr* new = malloc(sizeof(TStr) + len);
+    TStr* new = malloc(sizeof(TStr) + len + 1);
     new->len = len;
 
     char* loc = infos.flags & FORMAT_FLAG_LEFT ? new->str : new->str + len - precision;

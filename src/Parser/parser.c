@@ -265,8 +265,13 @@ Node* require_expr(ParseResult* res) {
     }
 
     ERR_CHECK(expect(res, TT_KWORD, "(KEYWORD:'end') EXPECTED", NULL, "end"))
+#ifdef _WIN32
 
     nt = has_ext(module, ".dll") ? NT_CREQUIRE : NT_REQUIRE;
+#else
+    nt = has_ext(module, ".so") ? NT_CREQUIRE : NT_REQUIRE;
+
+#endif
 
     Node* require_node = new_node(nt);
     require_node->node.importNode.module = module;
@@ -306,7 +311,11 @@ Node* from_import_expr(ParseResult* res) {
     ERR_CHECK(expect(res, TT_STR, "(STR) EXPECTED", &module, NULL))
     ERR_CHECK(expect(res, TT_KWORD, "(KEYWORD:'import') EXPECTED", NULL, "import"))
 
+#if _WIN32
     Node* import_node = has_ext(module, "dll") ? new_node(NT_CIMPORT) : new_node(NT_IMPORT);
+#else
+    Node* import_node = has_ext(module, ".so") ? new_node(NT_CIMPORT) : new_node(NT_IMPORT);
+#endif
     import_node->node.importNode.identifier = NIL;
     import_node->node.importNode.module = module;
     if (import_node->nt == NT_IMPORT) import_node->node.importNode.ast = simple_parse(AS_STRING(module)->str);
@@ -364,8 +373,11 @@ Node* import_expr(ParseResult* res) {
     ERR_CHECK(expect(res, TT_KWORD, "(KEYWORD:'as') EXPECTED", NULL, "as"))
     ERR_CHECK(expect(res, TT_IDENTIFIER, "(IDENTIFIER) EXPECTED", &identifier, NULL));
     ERR_CHECK(expect(res, TT_KWORD, "(KEYWORD:'end') EXPECTED", NULL, "end"))
-
+#ifdef _WIN32
     nt = has_ext(module, ".dll") ? NT_CIMPORT : NT_IMPORT;
+#else
+    nt = has_ext(module, ".so") ? NT_CIMPORT : NT_IMPORT;
+#endif
     module = import_path_finder(module);
 
     Node* import_node = new_node(nt);

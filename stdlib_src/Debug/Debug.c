@@ -1,12 +1,13 @@
 #include "Debug/Debug.h"
+#include <bs_api.h>
 
-__declspec(dllexport) char* bytescript_module_map = "Debug_map.bs";
-__declspec(dllexport) TValue bytescript_module_loader(TValue* argv, size_t argc) {
+BS_API char* bytescript_module_map = "Debug_map.bs";
+BS_API TValue bytescript_module_loader(TValue* argv, size_t argc) {
     TValue fields[] = {
         new_cfunc(assert_debug),
     };
 
-    TValue AssertionError = new_class(&Error_class, (TValue[1]){ new_cfunc(new_assertion_error) }, 1, 1);
+    TValue AssertionError = new_class(&Error_class, (TValue[1]) { new_cfunc(new_assertion_error) }, 1, 1);
     overwrite_global(AssertionError, make_fstring("AssertionError"));
 
     size_t field_count = sizeof(fields) / sizeof(fields[0]);

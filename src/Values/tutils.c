@@ -14,14 +14,20 @@ TValue to_return_value(TValue returnv[], size_t returnc) {
 
 TValue import_path_finder(TValue path) {
     struct stat st;
-
-    char buff[32767]; GetModuleFileName(NULL, buff, 32767);
-    char* last = strrchr(buff, '\\'); if (last) *(last + 1) = '\0';
+	
+    char buff[32767];
+    GetModuleFileName(NULL, buff, 32767);
+#ifdef _WIN32
+    char sep = '\\';
+#else
+    char sep = '/';
+#endif
+    char* last = strrchr(buff, sep); if (last) *(last + 1) = '\0';
 
     TValue exec_path = make_fstring(buff);
     TValue stdlib_path = concat_string((TValue[2]){ exec_path, make_fstring("stdlib/") }, 2);
 
-    TValue stdlib_try = concat_string((TValue[2]){ stdlib_path, path }, 2);
+    TValue stdlib_try = concat_string((TValue[2]){ stdlib_path, path }, 2); 
 
     if (!stat(AS_STRING(path)->str, &st)) return path;
     if (!stat(AS_STRING(stdlib_try)->str, &st)) return stdlib_try;

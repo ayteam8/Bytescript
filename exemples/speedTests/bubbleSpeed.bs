@@ -1,13 +1,13 @@
-import "Time.dll" as Time end
-import "Random.dll" as Random end
-import "exemples/bubbleSort.bs" as bubble end
-require "exemples/speedTests/benchmark.bs" as Function benchmark end
+import "Time.so" as Time end
+import "Random.so" as Random end
+import "../bubbleSort.bs" as bubble end
+require "benchmark.bs" as Function benchmark end
 
 
 func Number speedTest()
-    import "Time.dll" as Time end
-    import "Random.dll" as Random end
-    import "exemples/bubbleSort.bs" as bubble end
+    import "Time.so" as Time end
+    import "Random.so" as Random end
+    import "../bubbleSort.bs" as bubble end
 
     Number tests = 5000
     Table nums = {}

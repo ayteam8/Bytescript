@@ -1,9 +1,10 @@
 #include "Json/tJson.h"
 #include <ctype.h>
 #include <stdio.h>
+#include <bs_api.h>
 
-__declspec(dllexport) char* bytescript_module_map = "Json_map.bs";
-__declspec(dllexport) TValue bytescript_module_loader(TValue* argv, size_t argc) {
+BS_API char* bytescript_module_map = "Json_map.bs";
+BS_API TValue bytescript_module_loader(TValue* argv, size_t argc) {
     TValue fields[] = {
         new_cfunc(parse_json),
         new_cfunc(stringify_json),

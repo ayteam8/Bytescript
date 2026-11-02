@@ -1,20 +1,20 @@
-import "Time.dll" as Time end
-import "Random.dll" as Random end
-import "exemples/fib.bs" as fib end
-require "exemples/speedTests/benchmark.bs" as Function benchmark end
+import "Time.so" as Time end
+import "Random.so" as Random end
+import "../fib.bs" as fib end
+require "benchmark.bs" as Function benchmark end
 
 
 func Number speedTest()
-    import "Time.dll" as Time end
-    import "Random.dll" as Random end
-    import "exemples/fib.bs" as fib end
+    import "Time.so" as Time end
+    import "Random.so" as Random end
+    import "../fib.bs" as fib end
 
     Number pre = Time:clock()
-    fib:fib(500)
+    fib:fib(32)
     Number post = Time:clock()
 
     return post - pre
 end
 
-print("Testing the speed of fibonacci of 500")
+print("Testing the speed of fibonacci of 32")
 print(benchmark(speedTest))

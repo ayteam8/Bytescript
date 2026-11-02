@@ -1,11 +1,12 @@
 #include <direct.h>
 #include <windows.h>
 #include <stdio.h>
+#include <bs_api.h>
 
 #include "OS/OS.h"
 
-__declspec(dllexport) char* bytescript_module_map = "OS_map.bs";
-__declspec(dllexport) TValue bytescript_module_loader(TValue* argv, size_t argc) {
+BS_API char* bytescript_module_map = "OS_map.bs";
+BS_API TValue bytescript_module_loader(TValue* argv, size_t argc) {
     TValue fields[] = {
         new_cfunc(env_os),
         new_cfunc(cwd_os),
@@ -142,7 +143,13 @@ TValue parent_os(TValue* argv, size_t argc) {
     MIN_ARGC(1); TYPE_CHECK(0, STRING, "String", "OS.parent");
     TStr* str = AS_STRING(absolute_os(argv, 1));
 
+#ifdef _WIN32
+
+
     char* filename = strrchr(str->str, '\\');
+#else
+    char *filename = strrchr(str->str, '/');
+#endif
     if (!filename) filename = str->str;
 
     return make_string(str->str, filename - str->str);

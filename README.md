@@ -15,7 +15,7 @@ There are two ways of installing bytescript :
 
 1. Releases
     - Download the latest release from the github repo
-    - Move the release into `C:\Program Files`
+    - Move the release somewhere you want
     - Add the folder to your computer's `environnement variables`'s `PATH`
 
 <br>
@@ -23,12 +23,13 @@ There are two ways of installing bytescript :
 2. Make
     - Download the source code from the github repo
     - Compile bytescript using `make`
-    - Move the `dist` folder into `C:\Program Files`
+    - Move the `dist` content folder into a new folder somewhere you want
     - Add the folder to your computer's `environnement variables`'s `PATH`
+
 
 ## Usage
 
-`bytescript.exe mycode.bs` or `bytescript mycode.bs`
+`bytescript mycode.bs`
 
 ## Documentation
 

@@ -1,0 +1,9 @@
+func String getip(String name) end
+func Number socket() end
+func Number connect(Number sock, String ip, Number port) end
+func Number send(Number sock, String msg) end
+func String recv(Number sock, Number dontwait) end
+func Number bind(Number sock, Number port) end
+func Number listen(Number sock, Number max_clients) end
+func Number accept(Number sock) end
+func Number close(Number sock) end

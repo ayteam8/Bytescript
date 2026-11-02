@@ -1,0 +1,10 @@
+import "net.so" as net end
+
+Number sock = net:socket()
+
+String ip = net:getip("www.google.com")
+String request = "GET / HTTP/1.1\r\nHost: www.google.com\r\nConnection: close\r\n\r\n"
+
+net:connect(sock, ip, 80)
+net:send(sock, request)
+print(net:recv(sock, 1))
