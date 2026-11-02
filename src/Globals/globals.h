@@ -37,3 +37,4 @@ TValue make_globals_types_from_file(TValue filename);
 TValue get_global(TValue name);
 
 #endif
+
