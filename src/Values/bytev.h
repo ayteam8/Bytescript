@@ -4,12 +4,17 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+// well i need to access tfree yk?
+
 
 #define LJ_ALIGN(x) __attribute__((aligned(x)))
 
 
 // TYPEDEFS
 
+typedef struct {
+	uint16_t ref;
+} Obj;//basically to have a ref counter that is for EVERY THING, instead of passing the object, you put the object casted to a Obj struct
 
 typedef uint64_t TBool;
 typedef double TNumber;
@@ -25,6 +30,7 @@ typedef LJ_ALIGN(8) union BValue {
 typedef TValue (*CFunc)(TValue* argv, size_t argc);
 
 typedef struct Func {
+    uint16_t ref;
     uint8_t isCfunc;
     union {
         CFunc cfunc;
@@ -38,6 +44,7 @@ typedef struct Func {
 } TFunc;
 
 typedef struct Str {
+    uint16_t ref;
     size_t len;
     char str[];
 } TStr;
@@ -47,6 +54,7 @@ typedef struct Str {
 
 
 typedef struct {
+    uint16_t ref;
     size_t len;
     size_t capacity;
     TValue* array;
@@ -76,6 +84,7 @@ typedef struct {
 } HashTable;
 
 typedef struct Table {
+    uint16_t ref;
     Array array;
     HashTable hash_table;
 } TTable;
@@ -85,11 +94,13 @@ typedef struct Table {
 
 
 typedef struct {
+    uint16_t ref;
     size_t inherited_count;
     TValue fields[];
 } TClass;
 
 typedef struct {
+    uint16_t ref;
     TClass* class;
     TValue fields[];
 } TObject;
@@ -98,7 +109,7 @@ typedef struct {
 // CDATA
 
 
-typedef struct {
+typedef struct { // idk if i have to add here also the ref counter, idk
     char* name;
     // add stuff later
 } TCDataType;
@@ -168,6 +179,7 @@ typedef TValue* TStack;
 #define AS_CLASS(v)     ( ( TClass* )( PAYLOAD(v) ) )
 #define AS_OBJECT(v)    ( ( TObject* )( PAYLOAD(v) ) )
 #define AS_CDATA(v)     ( ( TCData* )( PAYLOAD(v) ) )
+#define AS_OBJ(v)	( (Obj *)( PAYLOAD(v) ) )
 
 #define STR_TO_TVALUE(v)( NAN_AS_TVALUE(( (uint64_t)(v) ) | STRING) )
 #define FNC_TO_TVALUE(v)( NAN_AS_TVALUE(( (uint64_t)(v) ) | FUNC) )
@@ -199,6 +211,7 @@ static TValue copy_tvalue(TValue tv1) {
     switch (TYPE(tv1)) {
         case STRING: {
             TStr* str = AS_STRING(tv1);
+	    str->ref = 0; // we'll
             TStr* copied = malloc(sizeof(TStr) + str->len + 1);
             strncpy(copied->str, str->str, str->len + 1);
             
@@ -211,6 +224,7 @@ static TValue copy_tvalue(TValue tv1) {
 
 static TValue new_func(const uint8_t* bytecode, const TValue* const_pool, uint8_t const_len, TValue* const* upvalues) {
     TFunc* func = malloc(sizeof(TFunc) + BSIZE(const_len));
+    func->ref = 0;
     func->isCfunc = 0;
     func->bytescriptFunction.bytecode = bytecode;
     func->bytescriptFunction.upvalues = upvalues;
@@ -227,5 +241,34 @@ static TValue new_cfunc(CFunc cfunc) {
 
     return FNC_TO_TVALUE(func);
 }
+
+// OK, HERE ARE THE NEW FUNCTIONS, ADD_REF, AND DEL_REF
+static void add_ref(TValue obj) {
+	AS_OBJ(obj)->ref++;
+}
+
+// i have to include here because GLOBALS_H needs the rest of bytev.h
+
+#include "../Globals/globals.h"
+
+static void del_ref(TValue obj) { // this one has to take TValue because we have to know the type yk
+	if (AS_OBJ(obj)->ref<=0) {
+		// OK, TIME TO FREE THE OBJECT!
+		if (IS_STRING(obj) || IS_FUNC(obj) || IS_TABLE(obj)) {
+			tfree(&obj, 1); // yeah, yk, i think
+					// this will get the job
+					// done
+		} else {
+			// i'll figure out what the hell i have to do
+		}
+
+	} else {
+		AS_OBJ(obj)->ref--;
+	}
+}
+
+// new defines for the reference counter
+#define REF_DEL(v)	( del_ref(v) )
+#define REF_ADD(v)	( add_ref(v) )
 
 #endif
